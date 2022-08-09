@@ -16,7 +16,7 @@ clean:
 run: 	build
 	./$(BIN)
 
-install:	build
+install:
 	cp $(BIN) $(INSTALL_DIR)
 
 all:	build
