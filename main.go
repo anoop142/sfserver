@@ -9,15 +9,14 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"path/filepath"
-	"os"
 	"net/url"
+	"os"
+	"path/filepath"
 )
 
-
-type config struct{
-	path string
-	port string
+type config struct {
+	path    string
+	port    string
 	verbose bool
 }
 
@@ -38,19 +37,18 @@ func getLocalIP() string {
 	return ""
 }
 
-func (cfg *config)serveFile(w http.ResponseWriter, r *http.Request){
-	if cfg.verbose{
+func (cfg *config) serveFile(w http.ResponseWriter, r *http.Request) {
+	if cfg.verbose {
 		log.Println(r.URL.Path)
 	}
-	if r.URL.Path != "/" + filepath.Base(cfg.path){
-		http.NotFound(w,r)
+	if r.URL.Path != "/"+filepath.Base(cfg.path) {
+		http.NotFound(w, r)
 		return
 	}
 	http.ServeFile(w, r, cfg.path)
 }
 
-
-func (cfg *config) serveDir(w http.ResponseWriter, r *http.Request){
+func (cfg *config) serveDir(w http.ResponseWriter, r *http.Request) {
 	http.FileServer(http.Dir("/tmp"))
 }
 
@@ -62,8 +60,8 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&cfg.port ,"p", "8000", "port to serve on")
-	flag.StringVar(&cfg.path ,"f", ".", "file or directory to serve")
+	flag.StringVar(&cfg.port, "p", "8000", "port to serve on")
+	flag.StringVar(&cfg.path, "f", ".", "file or directory to serve")
 	flag.BoolVar(&cfg.verbose, "v", false, "verbose")
 
 	flag.Parse()
@@ -73,24 +71,24 @@ func main() {
 
 	fileInfo, err := os.Stat(cfg.path)
 
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
-	
-	if fileInfo.IsDir(){
+
+	if fileInfo.IsDir() {
 		http.Handle("/", http.FileServer(http.Dir(absolutePath)))
-		if cfg.verbose{
+		if cfg.verbose {
 			log.Printf("Serving %s on %s:%s\n", absolutePath, localIP, cfg.port)
-		}else{
+		} else {
 			fmt.Printf("%s:%s\n", localIP, cfg.port)
 		}
-	}else{
+	} else {
 		http.HandleFunc("/", cfg.serveFile)
 		encodedFileName := url.PathEscape(filepath.Base(cfg.path))
 
-		if cfg.verbose{
+		if cfg.verbose {
 			log.Printf("Serving %s:%s/%s\n", localIP, cfg.port, encodedFileName)
-		}else{
+		} else {
 			fmt.Printf("%s:%s/%s\n", localIP, cfg.port, encodedFileName)
 		}
 	}
