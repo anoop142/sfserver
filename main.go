@@ -44,8 +44,13 @@ func (cfg *config) serveFile(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, cfg.path)
 }
 
-func (cfg *config) serveDir(w http.ResponseWriter, r *http.Request) {
-	http.FileServer(http.Dir("/tmp"))
+func (cfg *config) serveDir(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if cfg.verbose {
+			log.Println(r.URL.Path)
+		}
+		h.ServeHTTP(w, r)
+	})
 }
 
 func main() {
@@ -72,14 +77,14 @@ func main() {
 	}
 
 	if fileInfo.IsDir() {
-		http.Handle("/", http.FileServer(http.Dir(absolutePath)))
+		http.Handle("/", cfg.serveDir(http.FileServer(http.Dir(absolutePath))))
 		if cfg.verbose {
 			log.Printf("Serving %s on %s:%s\n", absolutePath, localIP, cfg.port)
 		} else {
 			fmt.Printf("%s:%s\n", localIP, cfg.port)
 		}
 	} else {
-		http.HandleFunc("/" + filepath.Base(cfg.path), cfg.serveFile)
+		http.HandleFunc("/"+filepath.Base(cfg.path), cfg.serveFile)
 		encodedFileName := url.PathEscape(filepath.Base(cfg.path))
 
 		if cfg.verbose {
