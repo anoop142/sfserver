@@ -41,10 +41,6 @@ func (cfg *config) serveFile(w http.ResponseWriter, r *http.Request) {
 	if cfg.verbose {
 		log.Println(r.URL.Path)
 	}
-	if r.URL.Path != "/"+filepath.Base(cfg.path) {
-		http.NotFound(w, r)
-		return
-	}
 	http.ServeFile(w, r, cfg.path)
 }
 
@@ -83,7 +79,7 @@ func main() {
 			fmt.Printf("%s:%s\n", localIP, cfg.port)
 		}
 	} else {
-		http.HandleFunc("/", cfg.serveFile)
+		http.HandleFunc("/" + filepath.Base(cfg.path), cfg.serveFile)
 		encodedFileName := url.PathEscape(filepath.Base(cfg.path))
 
 		if cfg.verbose {
