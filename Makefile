@@ -7,7 +7,7 @@ build:
 	go build -o $(BIN)
 
 compile:
-	env GOOS=linux GOARCH=amd64 go build -o $(BIN) -ldflags $(BUILD_FLAGS)
+	env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BIN) -ldflags $(BUILD_FLAGS)
 	env GOOS=windows GOARCH=amd64 go build -o $(BIN_WINDOWS) -ldflags $(BUILD_FLAGS)
 
 clean:
