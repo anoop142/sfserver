@@ -79,18 +79,18 @@ func main() {
 	if fileInfo.IsDir() {
 		http.Handle("/", cfg.serveDir(http.FileServer(http.Dir(absolutePath))))
 		if cfg.verbose {
-			log.Printf("Serving %s on %s:%s\n", absolutePath, localIP, cfg.port)
+			log.Printf("Serving %s on %s:%s", absolutePath, localIP, cfg.port)
 		} else {
-			fmt.Printf("%s:%s\n", localIP, cfg.port)
+			fmt.Printf("%s:%s", localIP, cfg.port)
 		}
 	} else {
 		http.HandleFunc("/"+filepath.Base(cfg.path), cfg.serveFile)
 		encodedFileName := url.PathEscape(filepath.Base(cfg.path))
 
 		if cfg.verbose {
-			log.Printf("Serving %s:%s/%s\n", localIP, cfg.port, encodedFileName)
+			log.Printf("Serving %s:%s/%s", localIP, cfg.port, encodedFileName)
 		} else {
-			fmt.Printf("%s:%s/%s\n", localIP, cfg.port, encodedFileName)
+			fmt.Printf("%s:%s/%s", localIP, cfg.port, encodedFileName)
 		}
 	}
 
