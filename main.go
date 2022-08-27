@@ -39,7 +39,7 @@ func getLocalIP() string {
 
 func (cfg *config) serveFile(w http.ResponseWriter, r *http.Request) {
 	if cfg.verbose {
-		log.Println(r.URL.Path)
+		log.Printf("%s - %s %s %s", r.RemoteAddr, r.Proto, r.Method, r.URL.RequestURI())
 	}
 	http.ServeFile(w, r, cfg.path)
 }
@@ -47,7 +47,7 @@ func (cfg *config) serveFile(w http.ResponseWriter, r *http.Request) {
 func (cfg *config) serveDir(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if cfg.verbose {
-			log.Println(r.URL.Path)
+			log.Printf("%s - %s %s %s", r.RemoteAddr, r.Proto, r.Method, r.URL.RequestURI())
 		}
 		h.ServeHTTP(w, r)
 	})
