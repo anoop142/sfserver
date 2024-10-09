@@ -3,7 +3,7 @@
 sfserver is a simple file server in go.
 
 ### Usage
-    sfserver -d /home -p 8080
+    sfserver -f /home -p 8080
     
      -f string
     	the file or directory to serve (default directory ".")
